@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ClaimType {
+  AUTO
+  PROPERTY
+  HEALTH
+  OTHER
+}
+
+enum ClaimStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum ClaimPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model Claim {
+  id              String        @id @default(uuid())
+  claimNumber     String        @unique
+  type            ClaimType
+  status          ClaimStatus   @default(DRAFT)
+  priority        ClaimPriority @default(MEDIUM)
+  description     String
+  incidentDate    DateTime?
+  reportDate      DateTime      @default(now())
+  estimatedAmount Float?
+  createdBy       String
+
+  claimant        Claimant?
+  claimDetails    ClaimDetails?
+  documents       ClaimDocument[]
+  aiLogs          AIExtractionLog[]
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("claims")
+}
+
+model Claimant {
+  id           String @id @default(uuid())
+  claimId      String @unique
+  firstName    String
+  lastName     String
+  email        String @default("")
+  phone        String @default("")
+  address      String @default("")
+  policyNumber String
+
+  claim        Claim  @relation(fields: [claimId], references: [id], onDelete: Cascade)
+
+  @@map("claimants")
+}
+
+model ClaimDetails {
+  id         String    @id @default(uuid())
+  claimId    String    @unique
+  detailType ClaimType
+  data       Json
+
+  claim      Claim     @relation(fields: [claimId], references: [id], onDelete: Cascade)
+
+  @@map("claim_details")
+}
+
+model ClaimDocument {
+  id         String   @id @default(uuid())
+  claimId    String
+  fileName   String
+  fileType   String
+  filePath   String
+  uploadedAt DateTime @default(now())
+
+  claim      Claim    @relation(fields: [claimId], references: [id], onDelete: Cascade)
+
+  @@map("claim_documents")
+}
+
+model AIExtractionLog {
+  id            String   @id @default(uuid())
+  claimId       String?
+  inputText     String
+  extractedData Json
+  confidence    Float
+  model         String
+  createdAt     DateTime @default(now())
+
+  claim         Claim?   @relation(fields: [claimId], references: [id], onDelete: SetNull)
+
+  @@map("ai_extraction_logs")
+}
