@@ -57,56 +57,59 @@ export function Step4Documents({ claimId, createDraftClaim, onNext, onBack }: St
   }, [uploadFile]);
 
   return (
-    <div className="space-y-6">
-      <h3 className="text-lg font-semibold">Step 4: Supporting Documents</h3>
+    <div className="space-y-6 brutal-animate-in">
+      <h3 className="brutal-heading text-xl flex items-center gap-3">
+        <span className="w-8 h-8 bg-brutal-lavender border-2 border-brutal-black flex items-center justify-center text-sm">4</span>
+        DOCUMENTS
+      </h3>
 
       <div
         onDrop={handleDrop}
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
-        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-          dragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-300'
-        }`}
+        className={`
+          border-[3px] border-dashed p-10 text-center transition-all
+          ${dragOver
+            ? 'border-brutal-blue bg-blue-50 shadow-brutal-sm -translate-x-[1px] -translate-y-[1px]'
+            : 'border-brutal-black/30 hover:border-brutal-black'
+          }
+        `}
       >
-        <p className="text-gray-600 mb-2">
-          {isUploading ? 'Uploading...' : 'Drag and drop files here, or click to browse'}
+        <div className="font-display text-4xl text-brutal-black/15 mb-3">&uarr;</div>
+        <p className="font-mono text-sm text-brutal-black/70 mb-4">
+          {isUploading ? '/// Uploading...' : 'Drag and drop files here'}
         </p>
-        <input
-          type="file"
-          multiple
-          onChange={handleFileInput}
-          className="hidden"
-          id="file-upload"
-        />
-        <label
-          htmlFor="file-upload"
-          className="inline-block px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium cursor-pointer hover:bg-gray-200 transition-colors"
-        >
+        <input type="file" multiple onChange={handleFileInput} className="hidden" id="file-upload" />
+        <label htmlFor="file-upload" className="brutal-btn brutal-btn-secondary cursor-pointer inline-flex">
           Browse Files
         </label>
-        <p className="text-xs text-gray-400 mt-2">Max 10MB per file. Supports images, PDFs, and common document formats.</p>
+        <p className="font-mono text-[10px] text-brutal-black/40 mt-4 uppercase tracking-wider">
+          Max 10MB per file &middot; Images, PDFs, Documents
+        </p>
       </div>
 
       {files.length > 0 && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-gray-700">Uploaded Files</h4>
+          <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-brutal-black/70">
+            Uploaded ({files.length})
+          </h4>
           {files.map((f) => (
-            <div key={f.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <span className="text-sm text-gray-700">{f.fileName}</span>
-              <span className="text-xs text-gray-400">{f.fileType}</span>
+            <div key={f.id} className="flex items-center justify-between p-3 bg-brutal-mint/30 border-2 border-brutal-black">
+              <span className="font-mono text-sm font-bold">{f.fileName}</span>
+              <span className="brutal-tag bg-white text-[10px]">{f.fileType}</span>
             </div>
           ))}
         </div>
       )}
 
       <div className="flex items-center gap-3">
-        <button type="button" onClick={onBack} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
-          Back
+        <button type="button" onClick={onBack} className="brutal-btn brutal-btn-secondary">
+          &larr; Back
         </button>
-        <button type="button" onClick={onNext} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-          Next: Review
+        <button type="button" onClick={onNext} className="brutal-btn brutal-btn-primary">
+          Next: Review &rarr;
         </button>
-        <span className="text-xs text-gray-400">Documents are optional. You can skip this step.</span>
+        <span className="font-mono text-[10px] text-brutal-black/40 uppercase">Optional step</span>
       </div>
     </div>
   );

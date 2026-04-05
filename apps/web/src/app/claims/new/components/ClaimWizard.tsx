@@ -12,7 +12,7 @@ export function ClaimWizard() {
   const wizard = useClaimWizard();
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 md:p-8">
+    <div className="brutal-card p-6 md:p-8 brutal-animate-in">
       <StepIndicator currentStep={wizard.step} onStepClick={wizard.goToStep} />
 
       {wizard.step === 1 && (

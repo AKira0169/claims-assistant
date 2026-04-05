@@ -11,79 +11,48 @@ interface Step3Props {
   onBack: () => void;
 }
 
-function AutoFields({ formData, onUpdateDetail }: { formData: WizardFormData; onUpdateDetail: (k: string, v: string) => void }) {
-  const details = formData.details as any;
-  const fields = [
+const DETAIL_FIELDS: Record<string, { name: string; label: string }[]> = {
+  [ClaimType.AUTO]: [
     { name: 'vehicleMake', label: 'Vehicle Make' },
     { name: 'vehicleModel', label: 'Vehicle Model' },
     { name: 'vehicleYear', label: 'Vehicle Year' },
     { name: 'licensePlate', label: 'License Plate' },
     { name: 'otherPartyName', label: 'Other Party Name' },
     { name: 'otherPartyInsurance', label: 'Other Party Insurance' },
-    { name: 'policeReportNumber', label: 'Police Report Number' },
+    { name: 'policeReportNumber', label: 'Police Report #' },
     { name: 'accidentLocation', label: 'Accident Location' },
-  ];
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {fields.map((f) => (
-        <div key={f.name}>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
-          <input
-            type="text"
-            value={details[f.name] || ''}
-            onChange={(e) => onUpdateDetail(f.name, e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function PropertyFields({ formData, onUpdateDetail }: { formData: WizardFormData; onUpdateDetail: (k: string, v: string) => void }) {
-  const details = formData.details as any;
-  const fields = [
+  ],
+  [ClaimType.PROPERTY]: [
     { name: 'propertyAddress', label: 'Property Address' },
     { name: 'damageType', label: 'Damage Type' },
     { name: 'roomsAffected', label: 'Rooms Affected' },
     { name: 'propertyType', label: 'Property Type' },
-  ];
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {fields.map((f) => (
-        <div key={f.name}>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
-          <input
-            type="text"
-            value={details[f.name] || ''}
-            onChange={(e) => onUpdateDetail(f.name, e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500"
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function HealthFields({ formData, onUpdateDetail }: { formData: WizardFormData; onUpdateDetail: (k: string, v: string) => void }) {
-  const details = formData.details as any;
-  const fields = [
+  ],
+  [ClaimType.HEALTH]: [
     { name: 'providerName', label: 'Provider Name' },
     { name: 'diagnosis', label: 'Diagnosis' },
     { name: 'treatmentDate', label: 'Treatment Date' },
     { name: 'treatmentType', label: 'Treatment Type' },
     { name: 'facilityName', label: 'Facility Name' },
-  ];
+  ],
+};
+
+function FieldGrid({ formData, onUpdateDetail, fields }: {
+  formData: WizardFormData;
+  onUpdateDetail: (k: string, v: string) => void;
+  fields: { name: string; label: string }[];
+}) {
+  const details = formData.details as any;
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {fields.map((f) => (
         <div key={f.name}>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
+          <label className="brutal-label">{f.label}</label>
           <input
             type="text"
             value={details[f.name] || ''}
             onChange={(e) => onUpdateDetail(f.name, e.target.value)}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500"
+            className="brutal-input"
           />
         </div>
       ))}
@@ -96,22 +65,12 @@ function OtherFields({ formData, onUpdateDetail }: { formData: WizardFormData; o
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-        <input
-          type="text"
-          value={details.category || ''}
-          onChange={(e) => onUpdateDetail('category', e.target.value)}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500"
-        />
+        <label className="brutal-label">Category</label>
+        <input type="text" value={details.category || ''} onChange={(e) => onUpdateDetail('category', e.target.value)} className="brutal-input" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Additional Info</label>
-        <textarea
-          value={details.additionalInfo || ''}
-          onChange={(e) => onUpdateDetail('additionalInfo', e.target.value)}
-          rows={3}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500"
-        />
+        <label className="brutal-label">Additional Info</label>
+        <textarea value={details.additionalInfo || ''} onChange={(e) => onUpdateDetail('additionalInfo', e.target.value)} rows={3} className="brutal-input resize-none" />
       </div>
     </div>
   );
@@ -123,14 +82,18 @@ export function Step3IncidentDetails({ formData, onUpdate, onNext, onBack }: Ste
   };
 
   const isAiFilled = (field: string) => formData.aiFilledFields.has(field);
+  const detailFields = DETAIL_FIELDS[formData.claimType];
 
   return (
-    <div className="space-y-6">
-      <h3 className="text-lg font-semibold">Step 3: Incident Details</h3>
+    <div className="space-y-6 brutal-animate-in">
+      <h3 className="brutal-heading text-xl flex items-center gap-3">
+        <span className="w-8 h-8 bg-brutal-blue text-white border-2 border-brutal-black flex items-center justify-center text-sm">3</span>
+        INCIDENT DETAILS
+      </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+          <label className="brutal-label brutal-label--inline">
             Incident Date
             {isAiFilled('incidentDate') && <AiBadge confidence="medium" />}
           </label>
@@ -138,31 +101,27 @@ export function Step3IncidentDetails({ formData, onUpdate, onNext, onBack }: Ste
             type="datetime-local"
             value={formData.incidentDate ? formData.incidentDate.slice(0, 16) : ''}
             onChange={(e) => onUpdate({ incidentDate: e.target.value ? new Date(e.target.value).toISOString() : '' })}
-            className={`w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500 ${
-              isAiFilled('incidentDate') ? 'border-blue-300 bg-blue-50' : 'border-gray-300'
-            }`}
+            className={`brutal-input ${isAiFilled('incidentDate') ? 'brutal-input-ai' : ''}`}
           />
         </div>
         <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-            Estimated Amount ($)
+          <label className="brutal-label brutal-label--inline">
+            Amount ($)
             {isAiFilled('estimatedAmount') && <AiBadge confidence="low" />}
           </label>
           <input
             type="number"
             value={formData.estimatedAmount ?? ''}
             onChange={(e) => onUpdate({ estimatedAmount: e.target.value ? Number(e.target.value) : null })}
-            className={`w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500 ${
-              isAiFilled('estimatedAmount') ? 'border-blue-300 bg-blue-50' : 'border-gray-300'
-            }`}
+            className={`brutal-input ${isAiFilled('estimatedAmount') ? 'brutal-input-ai' : ''}`}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+          <label className="brutal-label">Priority</label>
           <select
             value={formData.priority}
             onChange={(e) => onUpdate({ priority: e.target.value as ClaimPriority })}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500"
+            className="brutal-input"
           >
             {Object.values(ClaimPriority).map((p) => (
               <option key={p} value={p}>{p}</option>
@@ -172,21 +131,25 @@ export function Step3IncidentDetails({ formData, onUpdate, onNext, onBack }: Ste
       </div>
 
       <div>
-        <h4 className="text-sm font-medium text-gray-700 mb-3">
-          {formData.claimType} Details
-        </h4>
-        {formData.claimType === ClaimType.AUTO && <AutoFields formData={formData} onUpdateDetail={onUpdateDetail} />}
-        {formData.claimType === ClaimType.PROPERTY && <PropertyFields formData={formData} onUpdateDetail={onUpdateDetail} />}
-        {formData.claimType === ClaimType.HEALTH && <HealthFields formData={formData} onUpdateDetail={onUpdateDetail} />}
-        {formData.claimType === ClaimType.OTHER && <OtherFields formData={formData} onUpdateDetail={onUpdateDetail} />}
+        <div className="flex items-center gap-2 mb-4">
+          <div className="h-[3px] w-6 bg-brutal-black" />
+          <h4 className="brutal-label mb-0">
+            {formData.claimType} Details
+          </h4>
+          <div className="h-[3px] flex-1 bg-brutal-black/10" />
+        </div>
+        {detailFields
+          ? <FieldGrid formData={formData} onUpdateDetail={onUpdateDetail} fields={detailFields} />
+          : <OtherFields formData={formData} onUpdateDetail={onUpdateDetail} />
+        }
       </div>
 
       <div className="flex items-center gap-3">
-        <button type="button" onClick={onBack} className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
-          Back
+        <button type="button" onClick={onBack} className="brutal-btn brutal-btn-secondary">
+          &larr; Back
         </button>
-        <button type="button" onClick={onNext} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-          Next
+        <button type="button" onClick={onNext} className="brutal-btn brutal-btn-primary">
+          Next &rarr;
         </button>
       </div>
     </div>

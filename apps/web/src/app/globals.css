@@ -1,3 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --color-cream: #FFFDF7;
+    --color-black: #1a1a1a;
+    --color-yellow: #FFE600;
+    --color-pink: #FF3366;
+    --color-blue: #0066FF;
+    --color-lime: #B8FF00;
+    --color-lavender: #C4B5FD;
+    --color-peach: #FFB088;
+    --color-mint: #86EFAC;
+    --shadow-brutal: 4px 4px 0px var(--color-black);
+    --shadow-brutal-sm: 3px 3px 0px var(--color-black);
+    --shadow-brutal-lg: 6px 6px 0px var(--color-black);
+    --border-brutal: 3px solid var(--color-black);
+  }
+
+  * {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    font-family: 'Space Mono', monospace;
+    background-color: var(--color-cream);
+    color: var(--color-black);
+    background-image:
+      radial-gradient(circle, #e5e2db 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  ::selection {
+    background-color: var(--color-yellow);
+    color: var(--color-black);
+  }
+
+  input, textarea, select {
+    font-family: 'Space Mono', monospace;
+  }
+}
+
+@layer components {
+  .brutal-card {
+    background: white;
+    border: var(--border-brutal);
+    box-shadow: var(--shadow-brutal);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .brutal-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-brutal-lg);
+  }
+
+  .brutal-card:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px var(--color-black);
+  }
+
+  .brutal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: var(--border-brutal);
+    box-shadow: var(--shadow-brutal-sm);
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+
+  .brutal-btn:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: var(--shadow-brutal);
+  }
+
+  .brutal-btn:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: none;
+  }
+
+  .brutal-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .brutal-btn-primary {
+    background-color: var(--color-blue);
+    color: white;
+  }
+
+  .brutal-btn-secondary {
+    background-color: white;
+    color: var(--color-black);
+  }
+
+  .brutal-btn-accent {
+    background-color: var(--color-pink);
+    color: white;
+  }
+
+  .brutal-btn-success {
+    background-color: var(--color-lime);
+    color: var(--color-black);
+  }
+
+  .brutal-input {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    background: white;
+    border: var(--border-brutal);
+    outline: none;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+  }
+
+  .brutal-input:focus {
+    box-shadow: var(--shadow-brutal-sm);
+    transform: translate(-1px, -1px);
+  }
+
+  .brutal-input-ai {
+    background-color: #EEF2FF;
+    border-color: var(--color-blue);
+  }
+
+  .brutal-heading {
+    font-family: 'Archivo Black', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+
+  .brutal-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 2px solid var(--color-black);
+  }
+
+  .brutal-label {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: color-mix(in srgb, var(--color-black) 70%, transparent);
+    margin-bottom: 0.5rem;
+  }
+
+  .brutal-label--inline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .animate-marquee {
+    animation: marquee 20s linear infinite;
+  }
+
+  @keyframes brutal-enter {
+    0% {
+      opacity: 0;
+      transform: translateY(12px) rotate(-1deg);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) rotate(0deg);
+    }
+  }
+
+  .brutal-animate-in {
+    animation: brutal-enter 0.4s ease-out forwards;
+  }
+}

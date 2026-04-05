@@ -10,6 +10,15 @@ interface Step2Props {
   onBack: () => void;
 }
 
+const FIELDS: { name: string; label: string; required?: boolean }[] = [
+  { name: 'firstName', label: 'First Name', required: true },
+  { name: 'lastName', label: 'Last Name', required: true },
+  { name: 'email', label: 'Email' },
+  { name: 'phone', label: 'Phone' },
+  { name: 'address', label: 'Address' },
+  { name: 'policyNumber', label: 'Policy Number', required: true },
+];
+
 export function Step2ClaimantInfo({ formData, onUpdate, onNext, onBack }: Step2Props) {
   const updateClaimant = (field: string, value: string) => {
     onUpdate({
@@ -25,25 +34,19 @@ export function Step2ClaimantInfo({ formData, onUpdate, onNext, onBack }: Step2P
     return f?.confidence || null;
   };
 
-  const fields = [
-    { name: 'firstName', label: 'First Name', required: true },
-    { name: 'lastName', label: 'Last Name', required: true },
-    { name: 'email', label: 'Email' },
-    { name: 'phone', label: 'Phone' },
-    { name: 'address', label: 'Address' },
-    { name: 'policyNumber', label: 'Policy Number', required: true },
-  ];
-
   return (
-    <div className="space-y-6">
-      <h3 className="text-lg font-semibold">Step 2: Claimant Information</h3>
+    <div className="space-y-6 brutal-animate-in">
+      <h3 className="brutal-heading text-xl flex items-center gap-3">
+        <span className="w-8 h-8 bg-brutal-pink text-white border-2 border-brutal-black flex items-center justify-center text-sm">2</span>
+        CLAIMANT INFO
+      </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {fields.map((field) => (
+        {FIELDS.map((field) => (
           <div key={field.name}>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+            <label className="brutal-label brutal-label--inline">
               {field.label}
-              {field.required && <span className="text-red-500">*</span>}
+              {field.required && <span className="text-brutal-pink text-sm">*</span>}
               {isAiFilled(field.name) && getConfidence(field.name) && (
                 <AiBadge confidence={getConfidence(field.name)!} />
               )}
@@ -52,31 +55,23 @@ export function Step2ClaimantInfo({ formData, onUpdate, onNext, onBack }: Step2P
               type="text"
               value={(formData.claimant as any)[field.name] || ''}
               onChange={(e) => updateClaimant(field.name, e.target.value)}
-              className={`w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500 ${
-                isAiFilled(field.name)
-                  ? 'border-blue-300 bg-blue-50'
-                  : 'border-gray-300'
-              }`}
+              className={`brutal-input ${isAiFilled(field.name) ? 'brutal-input-ai' : ''}`}
             />
           </div>
         ))}
       </div>
 
       <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={onBack}
-          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
-        >
-          Back
+        <button type="button" onClick={onBack} className="brutal-btn brutal-btn-secondary">
+          &larr; Back
         </button>
         <button
           type="button"
           onClick={onNext}
           disabled={!formData.claimant.firstName || !formData.claimant.lastName || !formData.claimant.policyNumber}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="brutal-btn brutal-btn-primary"
         >
-          Next
+          Next &rarr;
         </button>
       </div>
     </div>
