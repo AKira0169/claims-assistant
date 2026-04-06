@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
 
         <div className="bg-brutal-black text-brutal-yellow py-1 overflow-hidden">
-          <div className="animate-marquee whitespace-nowrap font-mono text-xs font-bold tracking-widest">
+          <div className="animate-marquee whitespace-nowrap font-mono text-sm font-bold tracking-widest">
             {'AI-POWERED CLAIMS /// FAST INTAKE /// SMART EXTRACTION /// AUTOMATED VALIDATION /// '
               .repeat(4)}
           </div>

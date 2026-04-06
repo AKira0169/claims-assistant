@@ -7,3 +7,11 @@ dist/
 .env.local
 coverage/
 uploads/
+
+# Prisma generated client
+apps/api/src/generated/
+
+# Prisma config build artifacts
+apps/api/prisma/prisma.config.js
+apps/api/prisma/prisma.config.d.ts
+apps/api/prisma/prisma.config.js.map

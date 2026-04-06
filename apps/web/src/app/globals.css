@@ -1,24 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Archivo Black", sans-serif;
+  --font-mono: "Space Mono", monospace;
+  --color-cream: #FFFDF7;
+  --color-brutal-black: #1a1a1a;
+  --color-brutal-yellow: #FFE600;
+  --color-brutal-pink: #FF3366;
+  --color-brutal-blue: #0066FF;
+  --color-brutal-lime: #B8FF00;
+  --color-brutal-lavender: #C4B5FD;
+  --color-brutal-peach: #FFB088;
+  --color-brutal-mint: #86EFAC;
+  --shadow-brutal: 4px 4px 0px #1a1a1a;
+  --shadow-brutal-sm: 3px 3px 0px #1a1a1a;
+  --shadow-brutal-lg: 6px 6px 0px #1a1a1a;
+}
 
 @layer base {
   :root {
-    --color-cream: #FFFDF7;
-    --color-black: #1a1a1a;
-    --color-yellow: #FFE600;
-    --color-pink: #FF3366;
-    --color-blue: #0066FF;
-    --color-lime: #B8FF00;
-    --color-lavender: #C4B5FD;
-    --color-peach: #FFB088;
-    --color-mint: #86EFAC;
-    --shadow-brutal: 4px 4px 0px var(--color-black);
-    --shadow-brutal-sm: 3px 3px 0px var(--color-black);
-    --shadow-brutal-lg: 6px 6px 0px var(--color-black);
-    --border-brutal: 3px solid var(--color-black);
+    --border-brutal: 3px solid var(--color-brutal-black);
   }
 
   * {
@@ -27,16 +30,18 @@
 
   body {
     font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    line-height: 1.6;
     background-color: var(--color-cream);
-    color: var(--color-black);
+    color: var(--color-brutal-black);
     background-image:
       radial-gradient(circle, #e5e2db 1px, transparent 1px);
     background-size: 24px 24px;
   }
 
   ::selection {
-    background-color: var(--color-yellow);
-    color: var(--color-black);
+    background-color: var(--color-brutal-yellow);
+    color: var(--color-brutal-black);
   }
 
   input, textarea, select {
@@ -59,17 +64,17 @@
 
   .brutal-card:active {
     transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0px var(--color-black);
+    box-shadow: 1px 1px 0px var(--color-brutal-black);
   }
 
   .brutal-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.625rem 1.25rem;
+    padding: 0.75rem 1.5rem;
     font-family: 'Space Mono', monospace;
     font-weight: 700;
-    font-size: 0.875rem;
+    font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     border: var(--border-brutal);
@@ -94,29 +99,29 @@
   }
 
   .brutal-btn-primary {
-    background-color: var(--color-blue);
+    background-color: var(--color-brutal-blue);
     color: white;
   }
 
   .brutal-btn-secondary {
     background-color: white;
-    color: var(--color-black);
+    color: var(--color-brutal-black);
   }
 
   .brutal-btn-accent {
-    background-color: var(--color-pink);
+    background-color: var(--color-brutal-pink);
     color: white;
   }
 
   .brutal-btn-success {
-    background-color: var(--color-lime);
-    color: var(--color-black);
+    background-color: var(--color-brutal-lime);
+    color: var(--color-brutal-black);
   }
 
   .brutal-input {
     width: 100%;
-    padding: 0.625rem 0.875rem;
-    font-size: 0.875rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
     background: white;
     border: var(--border-brutal);
     outline: none;
@@ -130,7 +135,7 @@
 
   .brutal-input-ai {
     background-color: #EEF2FF;
-    border-color: var(--color-blue);
+    border-color: var(--color-brutal-blue);
   }
 
   .brutal-heading {
@@ -143,22 +148,22 @@
     display: inline-flex;
     align-items: center;
     gap: 0.25rem;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.75rem;
+    padding: 0.375rem 0.625rem;
+    font-size: 0.8125rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border: 2px solid var(--color-black);
+    border: 2px solid var(--color-brutal-black);
   }
 
   .brutal-label {
     display: block;
     font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: color-mix(in srgb, var(--color-black) 70%, transparent);
+    color: color-mix(in srgb, var(--color-brutal-black) 70%, transparent);
     margin-bottom: 0.5rem;
   }
 
