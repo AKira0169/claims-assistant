@@ -1,6 +1,6 @@
 import { Controller, Post, Body, HttpCode, HttpStatus, HttpException } from '@nestjs/common';
 import { AiService } from './ai.service';
-import { aiExtractRequestSchema, aiValidateRequestSchema } from '@claims-assistant/shared';
+import { aiExtractRequestSchema, aiValidateRequestSchema, chatRequestSchema } from '@claims-assistant/shared';
 
 @Controller('ai')
 export class AiController {
@@ -29,6 +29,20 @@ export class AiController {
     } catch {
       throw new HttpException(
         'AI validation is currently unavailable. You may submit without validation.',
+        HttpStatus.SERVICE_UNAVAILABLE,
+      );
+    }
+  }
+
+  @Post('chat')
+  @HttpCode(HttpStatus.OK)
+  async chat(@Body() body: any) {
+    const dto = chatRequestSchema.parse(body);
+    try {
+      return await this.aiService.chat(dto);
+    } catch {
+      throw new HttpException(
+        'AI chat is currently unavailable. Please try again later.',
         HttpStatus.SERVICE_UNAVAILABLE,
       );
     }

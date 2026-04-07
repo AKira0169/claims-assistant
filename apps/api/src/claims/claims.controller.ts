@@ -25,8 +25,27 @@ export class ClaimsController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+    @Query('status') status?: string,
+    @Query('type') type?: string,
+    @Query('priority') priority?: string,
+    @Query('search') search?: string,
+    @Query('dateFrom') dateFrom?: string,
+    @Query('dateTo') dateTo?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc',
   ) {
-    return this.claimsService.findAll(page, limit);
+    return this.claimsService.findAll({
+      status,
+      type,
+      priority,
+      search,
+      dateFrom,
+      dateTo,
+      sortBy,
+      sortOrder,
+      page,
+      limit,
+    });
   }
 
   @Get(':id')

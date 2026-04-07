@@ -94,22 +94,23 @@ export default function Home() {
           </div>
         </Link>
 
-        <div className="brutal-card p-6 bg-brutal-black/5 border-dashed opacity-60 cursor-not-allowed">
+        <Link href="/claims" className="brutal-card p-6 block group">
           <div className="flex items-start justify-between mb-4">
             <div className="w-12 h-12 bg-brutal-lavender border-[3px] border-brutal-black flex items-center justify-center">
               <span className="text-brutal-black text-xl font-bold">#</span>
             </div>
-            <span className="brutal-tag bg-white">Soon</span>
+            <span className="brutal-tag bg-brutal-lime">Live</span>
           </div>
           <h3 className="brutal-heading text-2xl mb-2">VIEW CLAIMS</h3>
           <p className="font-mono text-sm text-brutal-black/60 leading-relaxed">
             Browse, search, and manage all submitted
-            claims in one place.
+            claims with AI-powered chat assistant.
           </p>
-          <div className="mt-4 pt-4 border-t-2 border-dashed border-brutal-black/20 flex items-center gap-2 font-mono text-sm font-bold uppercase text-brutal-black/40">
-            Coming soon
+          <div className="mt-4 pt-4 border-t-2 border-dashed border-brutal-black/20 flex items-center gap-2 font-mono text-sm font-bold uppercase text-brutal-blue">
+            Browse claims
+            <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
           </div>
-        </div>
+        </Link>
       </div>
 
       <div className="grid grid-cols-3 gap-4">

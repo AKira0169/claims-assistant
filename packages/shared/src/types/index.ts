@@ -16,6 +16,11 @@ import {
   aiValidationResponseSchema,
   validationIssueSchema,
 } from '../schemas/ai.schema';
+import {
+  chatMessageSchema,
+  chatRequestSchema,
+  chatResponseSchema,
+} from '../schemas/chat.schema';
 
 // Claim types
 export type CreateClaimDto = z.infer<typeof createClaimSchema>;
@@ -40,3 +45,8 @@ export type AiExtractedField = z.infer<typeof aiExtractedFieldSchema>;
 export type AiValidateRequest = z.infer<typeof aiValidateRequestSchema>;
 export type AiValidationResponse = z.infer<typeof aiValidationResponseSchema>;
 export type ValidationIssue = z.infer<typeof validationIssueSchema>;
+
+// Chat types
+export type ChatMessage = z.infer<typeof chatMessageSchema>;
+export type ChatRequest = z.infer<typeof chatRequestSchema>;
+export type ChatResponse = z.infer<typeof chatResponseSchema>;

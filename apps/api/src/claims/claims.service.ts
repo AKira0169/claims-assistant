@@ -28,18 +28,68 @@ export class ClaimsService {
     });
   }
 
-  async findAll(page = 1, limit = 20) {
+  async findAll(options: {
+    status?: string;
+    type?: string;
+    priority?: string;
+    search?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+    page?: number;
+    limit?: number;
+  } = {}) {
+    const page = options.page || 1;
+    const limit = options.limit || 20;
     const skip = (page - 1) * limit;
-    const [claims, total] = await Promise.all([
+
+    const where: any = {};
+
+    if (options.status) {
+      const statuses = options.status.split(',');
+      where.status = { in: statuses };
+    }
+
+    if (options.type) {
+      where.type = options.type;
+    }
+
+    if (options.priority) {
+      where.priority = options.priority;
+    }
+
+    if (options.search) {
+      where.OR = [
+        { claimNumber: { contains: options.search, mode: 'insensitive' } },
+        { description: { contains: options.search, mode: 'insensitive' } },
+        { claimant: { firstName: { contains: options.search, mode: 'insensitive' } } },
+        { claimant: { lastName: { contains: options.search, mode: 'insensitive' } } },
+      ];
+    }
+
+    if (options.dateFrom || options.dateTo) {
+      where.incidentDate = {};
+      if (options.dateFrom) where.incidentDate.gte = new Date(options.dateFrom);
+      if (options.dateTo) where.incidentDate.lte = new Date(options.dateTo);
+    }
+
+    const sortBy = options.sortBy || 'createdAt';
+    const sortOrder = options.sortOrder || 'desc';
+    const orderBy = { [sortBy]: sortOrder };
+
+    const [data, total] = await Promise.all([
       this.prisma.claim.findMany({
+        where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy,
         include: { claimant: true },
       }),
-      this.prisma.claim.count(),
+      this.prisma.claim.count({ where }),
     ]);
-    return { claims, total, page, limit };
+
+    return { data, total, page, limit };
   }
 
   async findOne(id: string) {
