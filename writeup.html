@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Claims Assistant — Project Write-Up</title>
+  <style>
+    @page { margin: 1in; }
+    body {
+      font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #1a1a1a;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    h1 {
+      font-size: 24px;
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 8px;
+      margin-bottom: 4px;
+      color: #1e293b;
+    }
+    .subtitle {
+      color: #64748b;
+      font-size: 13px;
+      margin-bottom: 28px;
+    }
+    h2 {
+      font-size: 17px;
+      color: #2563eb;
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+    p, li {
+      margin-bottom: 6px;
+    }
+    ul, ol {
+      padding-left: 22px;
+    }
+    li {
+      margin-bottom: 4px;
+    }
+    strong { color: #0f172a; }
+    .highlight {
+      background: #f1f5f9;
+      border-left: 3px solid #2563eb;
+      padding: 10px 14px;
+      margin: 12px 0;
+      border-radius: 0 4px 4px 0;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Claims Assistant — Project Write-Up</h1>
+<div class="subtitle">AI-Assisted Insurance Claims Intake Application &nbsp;|&nbsp; April 2026</div>
+
+<h2>1. Problem &amp; Motivation</h2>
+<p>
+  Insurance claims intake is tedious and error-prone. Claimants must fill lengthy forms with type-specific fields
+  (auto, property, health), and adjusters must manually review submissions for missing data, logical inconsistencies,
+  and anomalies. I chose this problem because it is a natural fit for LLM-assisted workflows: free-text descriptions
+  contain most of the structured data needed, and validation rules are nuanced enough that rule-based checks alone
+  fall short.
+</p>
+
+<h2>2. How Users Interact</h2>
+<p>The application centers on a <strong>5-step wizard</strong>:</p>
+<ol>
+  <li><strong>Type &amp; Description</strong> — The user selects a claim type (auto, property, health, other) and writes
+    a free-text incident description. Clicking "Extract with AI" sends the text to GPT-4o, which returns structured
+    fields with per-field confidence scores. Only medium/high confidence fields pre-fill the form.</li>
+  <li><strong>Claimant Info</strong> — Name, contact details, and policy number. Pre-filled by AI where possible;
+    users review and correct.</li>
+  <li><strong>Incident Details</strong> — Date, estimated amount, priority, plus type-specific fields (e.g., vehicle
+    info for auto claims, property address for property claims). Also AI-populated.</li>
+  <li><strong>Documents</strong> — File upload for supporting evidence.</li>
+  <li><strong>Review &amp; Submit</strong> — AI validation runs automatically, surfacing errors (blocking) and warnings
+    (overridable). Users see a full summary before submitting.</li>
+</ol>
+<p>
+  A separate <strong>chat assistant</strong> lets internal staff query claims data conversationally — e.g.,
+  "show me all urgent property claims from last month" — backed by OpenAI tool calling against four backend
+  operations (search, lookup, stats, recent activity).
+</p>
+
+<h2>3. Key Technical &amp; Product Decisions</h2>
+<ul>
+  <li><strong>Monorepo with shared types:</strong> Zod schemas in a shared package are the single source of truth for
+    request/response shapes. Both frontend and backend import them, eliminating type drift between layers.</li>
+  <li><strong>Confidence-gated pre-fill:</strong> AI extraction returns confidence per field. Low-confidence fields are
+    excluded from auto-fill, reducing the risk of silently inserting wrong data. The UI tracks which fields were
+    AI-filled so users know what to verify.</li>
+  <li><strong>Validation as AI, not rules:</strong> Instead of hardcoding validation logic, the system sends the full
+    claim to GPT-4o for completeness and anomaly checks. This catches nuanced issues (incident date in the future,
+    amounts unusual for the claim type) that would require extensive rule maintenance.</li>
+  <li><strong>Graceful degradation:</strong> If AI services fail, users can still complete and submit claims manually.
+    Validation failures show a notice but do not block the workflow.</li>
+  <li><strong>Draft-first persistence:</strong> The wizard creates a draft claim in the database before document upload,
+    so files attach to a real record. Idempotency checks prevent duplicate drafts.</li>
+</ul>
+
+<h2>4. Edge Cases &amp; Limitations</h2>
+<ul>
+  <li><strong>Relative date resolution:</strong> The current date is injected into the AI prompt so "yesterday" resolves
+    correctly, but ambiguous dates ("last Friday" across month boundaries) can still mis-resolve.</li>
+  <li><strong>Chat iteration cap:</strong> The chat assistant limits tool-call iterations to 5 to prevent infinite loops,
+    meaning very complex multi-step queries may get truncated.</li>
+  <li><strong>No authentication:</strong> The system has no user auth — all claims are visible to all users and
+    <em>createdBy</em> is a placeholder.</li>
+  <li><strong>No real-time updates:</strong> The claims dashboard requires manual refresh; there are no WebSocket or
+    polling mechanisms for status changes.</li>
+  <li><strong>AI cost exposure:</strong> Every extraction and validation call hits the OpenAI API with no rate limiting
+    or cost controls beyond max-result caps on search queries.</li>
+</ul>
+
+<h2>5. What I Would Improve Next</h2>
+<ol>
+  <li><strong>Authentication &amp; RBAC</strong> — Add user roles (claimant, adjuster, admin) so claims are scoped and
+    actions are permissioned.</li>
+  <li><strong>Streaming chat responses</strong> — The chat assistant currently waits for the full response; streaming
+    would improve perceived latency.</li>
+  <li><strong>Frontend tests</strong> — The web app has zero test coverage. Component tests for the wizard steps and
+    integration tests for the AI-assisted flow are overdue.</li>
+  <li><strong>Cost guardrails</strong> — Per-user rate limits on AI calls, plus a fallback to cheaper models for
+    simple extractions.</li>
+  <li><strong>Claim lifecycle automation</strong> — Use AI to suggest next actions (request more info, escalate,
+    approve) based on claim content and history, moving beyond intake into adjudication support.</li>
+</ol>
+
+</body>
+</html>
