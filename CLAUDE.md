@@ -10,8 +10,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 pnpm workspaces + Turborepo. Three packages:
 
-- **apps/api** — NestJS 10 backend (REST). Modules: `claims`, `ai`, `documents`, `prisma`. Runs on port 3001 by default.
-- **apps/web** — Next.js 14 frontend (App Router). Main feature is a 5-step claim submission wizard at `/claims/new`. Uses Tailwind CSS.
+- **apps/api** — NestJS 11 backend (REST). Modules: `claims`, `ai`, `documents`, `prisma`. Runs on port 3001 by default.
+- **apps/web** — Next.js 16 frontend (App Router). Main feature is a 5-step claim submission wizard at `/claims/new`. Uses Tailwind CSS.
 - **packages/shared** — Zod schemas, TypeScript enums, and inferred types shared between api and web. Imported as `@claims-assistant/shared`. Published as raw `.ts` (no build step needed for consumers, but `pnpm build` runs `tsc`).
 
 ## Commands
@@ -63,3 +63,10 @@ cd apps/api && npx jest --testPathPattern="claims.controller"
 - API unit tests: Jest with ts-jest, files matching `*.spec.ts` under `apps/api/src/`. Module mapper aliases `@claims-assistant/shared` to the shared package source.
 - API e2e tests: separate Jest config at `apps/api/test/jest-e2e.json`, files matching `*.e2e-spec.ts`.
 - Web: no tests configured yet.
+
+## Gotchas
+
+- The shared package has no build step for consumers — it ships raw `.ts` files. Don't look for compiled output.
+- Prisma models use `@@map` for snake_case table names — model names are PascalCase in code but snake_case in DB.
+- No eslint or prettier config exists in the repo — don't add linting rules or format configs unless asked.
+- Web app has no tests configured yet — don't suggest running web tests.
