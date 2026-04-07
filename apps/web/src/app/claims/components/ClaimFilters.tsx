@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ClaimStatus, ClaimType, ClaimPriority } from '@claims-assistant/shared';
 import { ClaimFilters as ClaimFiltersType } from '../hooks/useClaims';
+import { BrutalDatePicker } from '../../../components/BrutalDatePicker';
 
 const STATUSES = Object.values(ClaimStatus);
 const TYPES = Object.values(ClaimType);
@@ -93,20 +94,29 @@ export function ClaimFilters({ filters, onFilterChange, onClear }: ClaimFiltersP
           ))}
         </select>
 
-        <input
-          type="date"
-          value={filters.dateFrom}
-          onChange={(e) => onFilterChange({ dateFrom: e.target.value })}
-          className="brutal-input text-sm w-auto"
-          placeholder="From"
-        />
-        <input
-          type="date"
-          value={filters.dateTo}
-          onChange={(e) => onFilterChange({ dateTo: e.target.value })}
-          className="brutal-input text-sm w-auto"
-          placeholder="To"
-        />
+        <div className="w-auto min-w-[170px]">
+          <BrutalDatePicker
+            selected={filters.dateFrom ? new Date(filters.dateFrom) : null}
+            onChange={(date) => onFilterChange({ dateFrom: date ? date.toISOString().split('T')[0] : '' })}
+            placeholderText="From date"
+            isClearable
+            selectsStart
+            startDate={filters.dateFrom ? new Date(filters.dateFrom) : null}
+            endDate={filters.dateTo ? new Date(filters.dateTo) : null}
+          />
+        </div>
+        <div className="w-auto min-w-[170px]">
+          <BrutalDatePicker
+            selected={filters.dateTo ? new Date(filters.dateTo) : null}
+            onChange={(date) => onFilterChange({ dateTo: date ? date.toISOString().split('T')[0] : '' })}
+            placeholderText="To date"
+            isClearable
+            selectsEnd
+            startDate={filters.dateFrom ? new Date(filters.dateFrom) : null}
+            endDate={filters.dateTo ? new Date(filters.dateTo) : null}
+            minDate={filters.dateFrom ? new Date(filters.dateFrom) : null}
+          />
+        </div>
 
         {hasActiveFilters && (
           <button onClick={onClear} className="brutal-btn brutal-btn-secondary text-xs px-3 py-2">

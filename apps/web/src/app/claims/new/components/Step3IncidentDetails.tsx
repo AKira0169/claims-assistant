@@ -3,6 +3,7 @@
 import { ClaimType, ClaimPriority } from '@claims-assistant/shared';
 import { WizardFormData } from '../types';
 import { AiBadge } from './AiBadge';
+import { BrutalDatePicker } from '../../../../components/BrutalDatePicker';
 
 interface Step3Props {
   formData: WizardFormData;
@@ -97,11 +98,12 @@ export function Step3IncidentDetails({ formData, onUpdate, onNext, onBack }: Ste
             Incident Date
             {isAiFilled('incidentDate') && <AiBadge confidence="medium" />}
           </label>
-          <input
-            type="datetime-local"
-            value={formData.incidentDate ? formData.incidentDate.slice(0, 16) : ''}
-            onChange={(e) => onUpdate({ incidentDate: e.target.value ? new Date(e.target.value).toISOString() : '' })}
-            className={`brutal-input ${isAiFilled('incidentDate') ? 'brutal-input-ai' : ''}`}
+          <BrutalDatePicker
+            selected={formData.incidentDate ? new Date(formData.incidentDate) : null}
+            onChange={(date) => onUpdate({ incidentDate: date ? date.toISOString() : '' })}
+            showTimeSelect
+            placeholderText="Select date & time"
+            className={isAiFilled('incidentDate') ? 'brutal-input-ai' : ''}
           />
         </div>
         <div>
