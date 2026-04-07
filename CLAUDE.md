@@ -14,6 +14,17 @@ pnpm workspaces + Turborepo. Three packages:
 - **apps/web** — Next.js 16 frontend (App Router). Main feature is a 5-step claim submission wizard at `/claims/new`. Uses Tailwind CSS.
 - **packages/shared** — Zod schemas, TypeScript enums, and inferred types shared between api and web. Imported as `@claims-assistant/shared`. Published as raw `.ts` (no build step needed for consumers, but `pnpm build` runs `tsc`).
 
+## Setup
+
+```bash
+pnpm install                # install all dependencies
+cp apps/api/.env.example apps/api/.env   # configure API env vars (DATABASE_URL, OPENAI_API_KEY)
+cp apps/web/.env.example apps/web/.env   # configure web env vars (NEXT_PUBLIC_API_URL)
+pnpm db:generate            # generate Prisma client
+pnpm db:migrate             # run database migrations
+pnpm dev                    # start all apps
+```
+
 ## Commands
 
 ```bash
@@ -45,10 +56,11 @@ cd apps/api && npx jest --testPathPattern="claims.controller"
 ## Architecture Notes
 
 - **Database**: PostgreSQL via Prisma. Schema at `apps/api/prisma/schema.prisma`. Core models: `Claim`, `Claimant`, `ClaimDetails`, `ClaimDocument`, `AIExtractionLog`. All tables use `@@map` to snake_case table names.
-- **AI integration**: `apps/api/src/ai/ai.service.ts` uses the OpenAI SDK (`gpt-4o`) for two operations: `extract` (free-text → structured claim data with per-field confidence) and `validate` (completeness/anomaly checks). Responses are validated with Zod schemas from shared package. Extraction results are logged to `AIExtractionLog`.
+- **AI integration**: `apps/api/src/ai/ai.service.ts` uses the OpenAI SDK (`gpt-4o`) for three operations: `extract` (free-text → structured claim data with per-field confidence), `validate` (completeness/anomaly checks), and `chat` (multi-turn conversational assistant). Responses are validated with Zod schemas from shared package. Extraction results are logged to `AIExtractionLog`. The chat feature uses `ChatToolsService` (`apps/api/src/ai/chat-tools.service.ts`) which exposes 4 tools: `searchClaims`, `getClaimById`, `getClaimStats`, `getRecentActivity`.
 - **Shared package contract**: Zod schemas in `packages/shared/src/schemas/` are the source of truth for API request/response shapes. Types are inferred from schemas via `z.infer`. Both api and web import from `@claims-assistant/shared`.
 - **Frontend wizard flow**: 5 steps — (1) type & description, (2) claimant info, (3) incident details, (4) documents, (5) review & submit. State managed by `useClaimWizard` hook. AI extraction runs after step 1 to pre-fill subsequent steps.
-- **API endpoints pattern**: `POST /claims` creates draft → `PATCH /claims/:id/claimant`, `PATCH /claims/:id/details`, `PATCH /claims/:id` update parts → `POST /claims/:id/submit` finalizes. AI endpoints: `POST /ai/extract`, `POST /ai/validate`.
+- **API endpoints pattern**: `POST /claims` creates draft → `PATCH /claims/:id/claimant`, `PATCH /claims/:id/details`, `PATCH /claims/:id` update parts → `POST /claims/:id/submit` finalizes. AI endpoints: `POST /ai/extract`, `POST /ai/validate`, `POST /ai/chat`.
+- **Chat assistant**: The web app includes a claim status assistant (`useChat` hook at `apps/web/src/app/claims/hooks/useChat.ts`) that provides conversational access to claims data — search, lookup, stats, and recent activity.
 
 ## Environment Variables
 
