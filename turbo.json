@@ -19,7 +19,8 @@
     "start": {
       "dependsOn": ["build"],
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["DATABASE_URL", "OPENAI_API_KEY", "API_PORT", "CORS_ORIGIN"]
     }
   }
 }
