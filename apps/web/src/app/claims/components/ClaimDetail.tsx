@@ -77,7 +77,7 @@ export function ClaimDetail({ claimId }: ClaimDetailProps) {
           <dl className="grid grid-cols-2 gap-y-2 gap-x-4 font-mono text-sm">
             {Object.entries(claim.claimDetails.data || {}).map(([key, value]) => (
               <div key={key} className="contents">
-                <dt className="text-brutal-black/50 uppercase text-xs">{key}:</dt>
+                <dt className="text-brutal-black/50 uppercase text-xs">{key.replace(/([A-Z])/g, ' $1').trim()}:</dt>
                 <dd className="font-bold">{String(value) || '\u2014'}</dd>
               </div>
             ))}

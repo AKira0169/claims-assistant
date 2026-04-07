@@ -29,8 +29,13 @@ export class AiService {
     });
   }
 
+  private getToday(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
   async extract(request: AiExtractRequest): Promise<AiExtractionResponse> {
     const systemPrompt = `You are a claims data extraction specialist for an insurance company.
+Today's date is ${this.getToday()}. Use this to resolve relative dates like "yesterday", "last week", etc.
 Given a free-text incident description and claim type, extract structured data.
 For each field you extract, assign a confidence level: "high", "medium", or "low".
 If you cannot determine a field, omit it entirely.
@@ -54,6 +59,14 @@ Respond with valid JSON matching this structure:
   },
   "overallConfidence": 0.0 to 1.0
 }
+
+IMPORTANT: For the "details" object, you MUST use these exact field names based on claim type:
+- AUTO: vehicleMake, vehicleModel, vehicleYear, licensePlate, otherPartyName, otherPartyInsurance, policeReportNumber, accidentLocation
+- PROPERTY: propertyAddress, damageType, roomsAffected, propertyType, estimatedRepairCost
+- HEALTH: providerName, diagnosis, treatmentDate, treatmentType, facilityName
+- OTHER: category, additionalInfo
+
+Extract individual values for each field (e.g., vehicleMake="Honda", vehicleModel="Civic", vehicleYear="2020" — not a combined "vehicle" field).
 Only include fields you can extract. The claim type is: ${request.claimType}`;
 
     try {
@@ -90,9 +103,8 @@ Only include fields you can extract. The claim type is: ${request.claimType}`;
   }
 
   async validate(request: AiValidateRequest): Promise<AiValidationResponse> {
-    const today = new Date().toISOString().split('T')[0];
     const systemPrompt = `You are a claims validation specialist for an insurance company.
-Today's date is ${today}.
+Today's date is ${this.getToday()}.
 Review the submitted claim data for completeness and anomalies.
 Check for:
 - Missing required fields (firstName, lastName, policyNumber, description, claim type)

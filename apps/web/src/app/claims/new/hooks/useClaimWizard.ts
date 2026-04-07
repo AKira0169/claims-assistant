@@ -5,11 +5,26 @@ import {
   ClaimType,
   AiExtractionResponse,
   AiValidationResponse,
-  ClaimantDto,
 } from '@claims-assistant/shared';
 import { WizardStep, WizardFormData, initialFormData } from '../types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
+function extractConfidentFields(
+  fields: Record<string, { value: unknown; confidence: string }> | undefined,
+  prefix: string,
+  aiFilledFields: Set<string>,
+): Record<string, string> {
+  const updates: Record<string, string> = {};
+  if (!fields) return updates;
+  for (const [key, field] of Object.entries(fields)) {
+    if (field && field.confidence !== 'low') {
+      updates[key] = String(field.value);
+      aiFilledFields.add(`${prefix}.${key}`);
+    }
+  }
+  return updates;
+}
 
 export function useClaimWizard() {
   const [step, setStep] = useState<WizardStep>(1);
@@ -54,16 +69,8 @@ export function useClaimWizard() {
 
       const extraction: AiExtractionResponse = await res.json();
       const aiFilledFields = new Set<string>();
-      const claimantUpdates: Partial<ClaimantDto> = {};
-
-      if (extraction.claimant) {
-        for (const [key, field] of Object.entries(extraction.claimant)) {
-          if (field && field.confidence !== 'low') {
-            (claimantUpdates as any)[key] = String(field.value);
-            aiFilledFields.add(`claimant.${key}`);
-          }
-        }
-      }
+      const claimantUpdates = extractConfidentFields(extraction.claimant, 'claimant', aiFilledFields);
+      const detailUpdates = extractConfidentFields(extraction.details, 'details', aiFilledFields);
 
       const claimUpdates: Partial<WizardFormData> = {};
 
@@ -79,6 +86,7 @@ export function useClaimWizard() {
       updateFormData({
         ...claimUpdates,
         claimant: { ...formData.claimant, ...claimantUpdates },
+        details: { ...formData.details, ...detailUpdates },
         aiExtraction: extraction,
         aiFilledFields,
       });

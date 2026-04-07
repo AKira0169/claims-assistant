@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateClaimDto, UpdateClaimDto, ClaimantDto, ClaimDetailsDto } from '@claims-assistant/shared';
 
@@ -138,7 +138,7 @@ export class ClaimsService {
   async submit(id: string) {
     const claim = await this.findOne(id);
     if (claim.status !== 'DRAFT') {
-      throw new Error(`Claim ${id} is not in DRAFT status`);
+      throw new BadRequestException(`Claim ${id} is not in DRAFT status. Current status: ${claim.status}`);
     }
     return this.prisma.claim.update({
       where: { id },
