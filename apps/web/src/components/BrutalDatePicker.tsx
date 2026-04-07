@@ -11,13 +11,14 @@ interface BrutalDatePickerProps {
   dateFormat?: string;
   placeholderText?: string;
   className?: string;
+  wrapperClassName?: string;
   isClearable?: boolean;
   selectsStart?: boolean;
   selectsEnd?: boolean;
-  startDate?: Date | null;
-  endDate?: Date | null;
-  minDate?: Date | null;
-  maxDate?: Date | null;
+  startDate?: Date;
+  endDate?: Date;
+  minDate?: Date;
+  maxDate?: Date;
 }
 
 const BrutalInput = forwardRef<HTMLInputElement, { value?: string; onClick?: () => void; placeholder?: string; className?: string }>(
@@ -36,43 +37,30 @@ const BrutalInput = forwardRef<HTMLInputElement, { value?: string; onClick?: () 
 BrutalInput.displayName = 'BrutalInput';
 
 export function BrutalDatePicker({
+  className = '',
+  wrapperClassName = '',
+  dateFormat,
+  showTimeSelect = false,
   selected,
   onChange,
-  showTimeSelect = false,
-  dateFormat,
-  placeholderText = 'Select date',
-  className = '',
-  isClearable = false,
-  selectsStart,
-  selectsEnd,
-  startDate,
-  endDate,
-  minDate,
-  maxDate,
+  ...rest
 }: BrutalDatePickerProps) {
   const format = dateFormat ?? (showTimeSelect ? 'MMM d, yyyy h:mm aa' : 'MMM d, yyyy');
 
   return (
-    <div className="brutal-datepicker-wrapper">
+    <div className={`brutal-datepicker-wrapper ${wrapperClassName}`}>
       <DatePicker
         selected={selected}
         onChange={onChange}
         showTimeSelect={showTimeSelect}
         timeIntervals={15}
         dateFormat={format}
-        placeholderText={placeholderText}
-        isClearable={isClearable}
         customInput={<BrutalInput className={`brutal-input text-sm ${className}`} />}
-        selectsStart={selectsStart}
-        selectsEnd={selectsEnd}
-        startDate={startDate ?? undefined}
-        endDate={endDate ?? undefined}
-        minDate={minDate ?? undefined}
-        maxDate={maxDate ?? undefined}
         popperPlacement="bottom-start"
         showMonthDropdown
         showYearDropdown
         dropdownMode="select"
+        {...rest}
       />
     </div>
   );

@@ -100,7 +100,7 @@ export function Step3IncidentDetails({ formData, onUpdate, onNext, onBack }: Ste
           </label>
           <BrutalDatePicker
             selected={formData.incidentDate ? new Date(formData.incidentDate) : null}
-            onChange={(date) => onUpdate({ incidentDate: date ? date.toISOString() : '' })}
+            onChange={(date: Date | null) => onUpdate({ incidentDate: date ? date.toISOString() : '' })}
             showTimeSelect
             placeholderText="Select date & time"
             className={isAiFilled('incidentDate') ? 'brutal-input-ai' : ''}

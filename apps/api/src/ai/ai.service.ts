@@ -90,7 +90,9 @@ Only include fields you can extract. The claim type is: ${request.claimType}`;
   }
 
   async validate(request: AiValidateRequest): Promise<AiValidationResponse> {
+    const today = new Date().toISOString().split('T')[0];
     const systemPrompt = `You are a claims validation specialist for an insurance company.
+Today's date is ${today}.
 Review the submitted claim data for completeness and anomalies.
 Check for:
 - Missing required fields (firstName, lastName, policyNumber, description, claim type)

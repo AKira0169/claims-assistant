@@ -36,12 +36,14 @@ export function ClaimFilters({ filters, onFilterChange, onClear }: ClaimFiltersP
     onFilterChange({ status: updated.join(',') });
   };
 
+  const dateFrom = filters.dateFrom ? new Date(filters.dateFrom) : null;
+  const dateTo = filters.dateTo ? new Date(filters.dateTo) : null;
+
   const hasActiveFilters =
     filters.status || filters.type || filters.priority || filters.search || filters.dateFrom || filters.dateTo;
 
   return (
     <div className="space-y-3">
-      {/* Search */}
       <input
         type="text"
         value={searchInput}
@@ -50,7 +52,6 @@ export function ClaimFilters({ filters, onFilterChange, onClear }: ClaimFiltersP
         className="brutal-input text-sm"
       />
 
-      {/* Status chips */}
       <div className="flex flex-wrap gap-2">
         <span className="font-mono text-xs font-bold uppercase text-brutal-black/40 self-center mr-1">
           Status:
@@ -70,7 +71,6 @@ export function ClaimFilters({ filters, onFilterChange, onClear }: ClaimFiltersP
         ))}
       </div>
 
-      {/* Dropdowns and dates */}
       <div className="flex flex-wrap gap-3">
         <select
           value={filters.type}
@@ -94,29 +94,27 @@ export function ClaimFilters({ filters, onFilterChange, onClear }: ClaimFiltersP
           ))}
         </select>
 
-        <div className="w-auto min-w-[170px]">
-          <BrutalDatePicker
-            selected={filters.dateFrom ? new Date(filters.dateFrom) : null}
-            onChange={(date) => onFilterChange({ dateFrom: date ? date.toISOString().split('T')[0] : '' })}
-            placeholderText="From date"
-            isClearable
-            selectsStart
-            startDate={filters.dateFrom ? new Date(filters.dateFrom) : null}
-            endDate={filters.dateTo ? new Date(filters.dateTo) : null}
-          />
-        </div>
-        <div className="w-auto min-w-[170px]">
-          <BrutalDatePicker
-            selected={filters.dateTo ? new Date(filters.dateTo) : null}
-            onChange={(date) => onFilterChange({ dateTo: date ? date.toISOString().split('T')[0] : '' })}
-            placeholderText="To date"
-            isClearable
-            selectsEnd
-            startDate={filters.dateFrom ? new Date(filters.dateFrom) : null}
-            endDate={filters.dateTo ? new Date(filters.dateTo) : null}
-            minDate={filters.dateFrom ? new Date(filters.dateFrom) : null}
-          />
-        </div>
+        <BrutalDatePicker
+          selected={dateFrom}
+          onChange={(date: Date | null) => onFilterChange({ dateFrom: date ? date.toISOString().split('T')[0] : '' })}
+          placeholderText="From date"
+          isClearable
+          selectsStart
+          startDate={dateFrom ?? undefined}
+          endDate={dateTo ?? undefined}
+          wrapperClassName="w-auto min-w-[170px]"
+        />
+        <BrutalDatePicker
+          selected={dateTo}
+          onChange={(date: Date | null) => onFilterChange({ dateTo: date ? date.toISOString().split('T')[0] : '' })}
+          placeholderText="To date"
+          isClearable
+          selectsEnd
+          startDate={dateFrom ?? undefined}
+          endDate={dateTo ?? undefined}
+          minDate={dateFrom ?? undefined}
+          wrapperClassName="w-auto min-w-[170px]"
+        />
 
         {hasActiveFilters && (
           <button onClick={onClear} className="brutal-btn brutal-btn-secondary text-xs px-3 py-2">
