@@ -9,7 +9,7 @@ coverage/
 uploads/
 
 # Prisma generated client
-apps/api/src/generated/
+apps/api/generated/
 
 # Prisma config build artifacts
 apps/api/prisma/prisma.config.js
